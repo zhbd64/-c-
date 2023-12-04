@@ -1,0 +1,239 @@
+#define _CRT_SECURE_NO_WARNINGS 1  // 允许使用可能存在安全问题的C库函数，如scanf、strcpy等
+#define _CRT_NONSTDC_NO_DEPRECATE 1 // 允许使用非标准的C库函数
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+
+typedef struct Student
+{
+    int num;  //学号
+    // char name[20]; //姓名
+    float score; //成绩
+    struct Student* next;
+}stu;
+
+stu* creat()
+{
+    stu* fhead = (stu*)malloc(sizeof(stu));
+    stu* onenode = (stu*)malloc(sizeof(stu));
+    stu* head;
+    head = fhead;
+    head->next = onenode;
+    onenode->next = NULL;
+
+    scanf("%d,%f", &onenode->num, &onenode->score);
+    if (onenode->num == 0 && onenode->score == 0)
+        return NULL;
+    else
+    {
+        while (!(onenode->num == 0 && onenode->score == 0))
+        {
+            head->next = onenode;
+            head = onenode;
+            //head->next = NULL;
+            onenode = (stu*)malloc(sizeof(stu));
+            onenode->next = NULL;
+            scanf("%d,%f", &onenode->num, &onenode->score);
+        }
+        free(onenode);
+
+        return fhead;//返回一个头节点
+    }
+}
+
+stu* creatSortedList()
+{//先输入 再作替换
+    stu* fhead, * onenode, * mp,*fmp,*lmp;
+    fhead = (stu*)malloc(sizeof(stu));
+    onenode = (stu*)malloc(sizeof(stu));
+    fhead->next = NULL;
+    onenode->next = NULL;
+    mp = fhead;//fhead为头节点
+    fmp = fhead;//fmp可以说在mp的前面
+
+    scanf("%d,%f", &onenode->num, &onenode->score);
+    if (onenode->num == 0 && onenode->score == 0)
+    {
+        return NULL;
+    }
+    while (!(onenode->num == 0 && onenode->score == 0))
+    {
+        mp->next = onenode;
+        mp = onenode;
+        onenode =(stu*) malloc(sizeof(stu));
+        onenode->next = NULL;
+        scanf("%d,%f", &onenode->num, &onenode->score);
+    }
+    //free(onenode);
+    //zuo tihuan
+    while (1)
+    {
+        int n = 0;
+        fmp = fhead;//现在fmp为头节点
+        mp = fmp->next;
+        lmp = mp->next;
+        while (lmp != NULL)
+        {
+            if (lmp->num < mp->num)
+            {
+                n++;
+                fmp->next = lmp;
+                mp->next = lmp->next;
+                lmp->next = mp;
+            }
+
+            fmp = fmp->next;
+            mp = fmp->next;
+            lmp = mp->next;
+        }
+        if (n == 0)
+        {
+            break;
+        }
+
+    }
+    return fhead;
+
+}
+
+void print(stu* head)
+{
+    if (head == NULL)
+    {
+        printf("Empty!\n");
+    }
+    else
+    {
+        head = head->next;
+        printf("Scores are:\n");
+        while (head != NULL)
+        {
+            printf("num:%d,score:%.2f\n", head->num, head->score);
+            head = head->next;
+        }
+    }
+}
+
+stu* combine(stu* p1, stu* p2)//注意返回的是头节点
+{
+    if (p1 == NULL && p2 == NULL)
+    {
+        return NULL;
+    }
+    else if (p1 == NULL && p2 != NULL)
+    {
+        stu* fmp, * fhead = p2, * mp, * lmp;
+        while (1)
+        {
+            int n = 0;
+            fmp = fhead;//现在fmp为头节点
+            mp = fmp->next;
+            lmp = mp->next;
+            while (lmp != NULL)
+            {
+                if (lmp->num < mp->num)
+                {
+                    n++;
+                    fmp->next = lmp;
+                    mp->next = lmp->next;
+                    lmp->next = mp;
+                }
+
+                fmp = fmp->next;
+                mp = fmp->next;
+                lmp = mp->next;
+            }
+            if (n == 0)
+            {
+                break;
+            }
+
+        }
+       
+        return p2;
+    }
+    else if (p2 == NULL && p1 != NULL)
+    {
+        return p1;
+    }
+    else//排序的情况
+    {
+        stu* fp1 = p1, * fp2 = p2, * fhp1 = fp1->next, * fhp2 = fp2->next;
+        stu* ptop1 = p1->next;//ptop1总是为第一个数据点
+        //即  fp1为p1头节点 fp2为p2头节点 \
+        // fhp1为p1的第一个数据点  fhp2为p2的第一个数据点
+
+        while (fhp2 != NULL)
+        {
+            int n = 0;
+            if (ptop1->num > fhp2->num)
+            {
+                p1->next = fhp2;
+                fp2->next = fhp2->next; n++;//说明\
+                fhp2已经换了一次，fp2就不用再下一个了
+                fhp2->next = ptop1;
+                ptop1 = fhp2;//最后使得ptop1一直指向p1的第一个数据点
+            }
+            else
+            {
+                fp1 = p1->next;
+                fhp1 = fp1->next;
+                while (fhp1 != NULL)
+                {
+                    if (fhp2->num > fp1->num && fhp2->num < fhp1->num)
+                    {
+                        fp1->next = fhp2;
+                        fp2->next = fhp2->next; n++;//说明\
+                        fhp2已经换了一次，fp2就不用再下一个了
+                        fhp2->next = fhp1;
+                        break;
+                    }
+
+                    fp1 = fp1->next;
+                    fhp1 = fp1->next;
+
+                }
+
+            }
+            if(n==0)
+            fp2 = fp2->next;
+
+            fhp2 = fp2->next;
+            
+            
+
+        }
+
+
+    }
+
+    return p1;
+
+}
+
+int main()
+{
+    stu* creat();
+    stu* creatSortedList();
+    stu* combine(stu * p1, stu * p2);//注意返回的是头节点
+    void print(stu * head);
+
+    stu* pt1, * pt2;
+    printf("Sorted List:\n");
+    pt1 = creatSortedList();
+    print(pt1);
+    printf("\nList:\n");
+    pt2 = creat();
+    print(pt2);
+
+    printf("\nCombining...\n");
+    pt1 = combine(pt1, pt2);
+    print(pt1);
+
+    return 0;
+}
+
+
+
