@@ -1,0 +1,98 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct Student {
+	int num;
+	float score;
+	struct Student* next;
+}student;
+student* creat()//创造链表，返回一个地址
+{
+	student* dhead = (student*)malloc(sizeof(student));//
+	student* head;
+	dhead->next = NULL;//创造头链表，将头链表设置为空
+	head = dhead;
+	student* onenode = (student*)malloc(sizeof(student));//创造第一个节点，为它分配空间
+	onenode->next = NULL;//先将设置的指向null
+	scanf("%d,%f", &onenode->num, &onenode->score);
+	if (onenode->num == 0 && onenode->score == 0)
+	{
+		free(onenode);
+		return NULL;//返回null，如果接收到null，\
+						则在print函数打印empty，然后结束
+	}
+	else
+	{
+		head->next = onenode;
+		head = onenode;//将head去onenode位置，onenode变为下一个
+		head->next = NULL;
+		while (1)
+		{
+			student* onenode = (student*)malloc(sizeof(student));
+			onenode->next = NULL;
+			scanf("%d,%f", &onenode->num, &onenode->score);
+			if (onenode->num == 0 && onenode->score == 0)
+			{
+				free(onenode);
+				break;
+			}
+			head->next = onenode;
+			head = onenode;//将head去onenode位置，onenode变为下一个
+			head->next = NULL;
+		}
+	}
+	return dhead->next;
+
+}
+void print(struct Student* head)
+{
+	if (head == NULL)
+	{
+		printf("Empty!\n");
+		exit(1);
+	}
+	printf("Scores are:\n");
+	while (head != NULL)
+	{
+		printf("num:%d,score:%.2f\n", head->num, head->score);
+		head = head->next;
+	}
+	return;
+
+}
+void modify(struct Student* head)
+{
+	printf("Please input the number you want to modify:\n");
+	int n; float t;
+	scanf("%d", &n);
+	
+	while (head != NULL)
+	{
+		if (head->num == n)
+		{
+			printf("Please input the new score:\n");
+			scanf("%f", &t);
+			head->score = t;
+			 return;
+		}
+		head = head->next;
+	}
+
+	printf("Not found!\n");
+}
+int main()
+{
+	student* creat();
+	void print(struct Student* head);
+	void modify(struct Student* head);
+
+	student* pt;
+	pt = creat();//创造链表，在这输入
+	print(pt);//打印出链表//如果是空链表则输出empty！
+	if (pt != NULL)//这里查看是不是空链表
+	{
+		modify(pt);//修改成绩
+		print(pt);
+	}
+
+	return 0;
+}
